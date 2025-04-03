@@ -7,5 +7,5 @@ export const loggedIn = createMiddleware<Context>(async (c, next) => {
 	if (!user) {
 		throw new HTTPException(401, { message: "unauthorised" });
 	}
-    await next();
+	await next();
 });

@@ -13,38 +13,40 @@ export const postUpvotesTable = pgTable("post_upvotes", {
 		.notNull(),
 });
 
-export const postUpvoteRelations = relations(postUpvotesTable, ({one}) => ({
-    post: one(postsTable, {
-        fields: [postUpvotesTable.postId],
-        references: [postsTable.id],
-        relationName: "postUpvotes"
-    }),
-    user: one(userTable, {
-        fields: [postUpvotesTable.userId],
-        references: [userTable.id],
-        relationName: "user"
-    })
+export const postUpvoteRelations = relations(postUpvotesTable, ({ one }) => ({
+	post: one(postsTable, {
+		fields: [postUpvotesTable.postId],
+		references: [postsTable.id],
+		relationName: "postUpvotes",
+	}),
+	user: one(userTable, {
+		fields: [postUpvotesTable.userId],
+		references: [userTable.id],
+		relationName: "user",
+	}),
 }));
 
-
 export const commentUpvotesTable = pgTable("comment_upvotes", {
-    id: serial("id").primaryKey(),
+	id: serial("id").primaryKey(),
 	commentId: integer("comment_id").notNull(),
 	userId: integer("user_id").notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+		.defaultNow()
+		.notNull(),
 });
 
-export const commentUpvoteRelations = relations(commentUpvotesTable, ({one}) => ({
-    post: one(commentsTable, {
-        fields: [commentUpvotesTable.commentId],
-        references: [commentsTable.id],
-        relationName: "commentUpvotes"
-    }),
-    user: one(userTable, {
-        fields: [commentUpvotesTable.userId],
-        references: [userTable.id],
-        relationName: "user"
-    })
-}));
+export const commentUpvoteRelations = relations(
+	commentUpvotesTable,
+	({ one }) => ({
+		post: one(commentsTable, {
+			fields: [commentUpvotesTable.commentId],
+			references: [commentsTable.id],
+			relationName: "commentUpvotes",
+		}),
+		user: one(userTable, {
+			fields: [commentUpvotesTable.userId],
+			references: [userTable.id],
+			relationName: "user",
+		}),
+	}),
+);

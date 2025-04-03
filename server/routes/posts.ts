@@ -313,9 +313,6 @@ export const postRouter = new Hono<Context>()
 					),
 				},
 			});
-			if (!count) {
-				throw new HTTPException(404, { message: "No Comments Found" });
-			}
 
 			return c.json<PaginatedResponse<Comment[]>>(
 				{
@@ -324,7 +321,8 @@ export const postRouter = new Hono<Context>()
 					data: comments as unknown as Comment[],
 					pagination: {
 						page,
-						totalPages: Math.ceil(count.count / limit) as number,
+						// biome-ignore lint/style/noNonNullAssertion: <explanation>
+						totalPages: Math.ceil(count!.count / limit) as number,
 					},
 				},
 				200,

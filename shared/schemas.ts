@@ -56,5 +56,5 @@ export const createCommentSchema = pick(insertCommentSchema, ["content"]);
 
 export const commentPaginationSchema = v.object({
 	...paginationSchema.entries,
-	includeChildren: v.optional(v.boolean())
-})
+	includeChildren: v.optional(v.boolean()),
+});

@@ -70,21 +70,23 @@ export const authRouter = new Hono<Context>()
 			},
 			201,
 		);
-	}).get("/logout", async(c) => {
-        const session = c.get("session");
-        if (!session) {
-            return c.redirect("/");
-        }
-        await lucia.invalidateSession(session.id);
-        c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize());
-        return c.redirect("/");
-    }).get("/user", loggedIn, async (c) => {
-        const user = c.get("user") as User;
-        return c.json<SuccessResponse<{username: string}>>({
-            success: true,
-            message: "",
-            data: {
-                username: user.username
-            }
-        })
-    })
+	})
+	.get("/logout", async (c) => {
+		const session = c.get("session");
+		if (!session) {
+			return c.redirect("/");
+		}
+		await lucia.invalidateSession(session.id);
+		c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize());
+		return c.redirect("/");
+	})
+	.get("/user", loggedIn, async (c) => {
+		const user = c.get("user") as User;
+		return c.json<SuccessResponse<{ username: string }>>({
+			success: true,
+			message: "",
+			data: {
+				username: user.username,
+			},
+		});
+	});
