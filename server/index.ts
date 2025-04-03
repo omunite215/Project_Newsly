@@ -5,6 +5,7 @@ import { HTTPException } from "hono/http-exception";
 import { lucia } from "./lucia";
 import type { Context } from "./context";
 import { authRouter } from "./routes/auth";
+import { postRouter } from "./routes/posts";
 
 const app = new Hono<Context>();
 
@@ -18,17 +19,24 @@ app.use("*", cors(), async (c, next) => {
 
 	const { session, user } = await lucia.validateSession(sessionId);
 	if (session?.fresh) {
-		c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), { append: true });
+		c.header("Set-Cookie", lucia.createSessionCookie(session.id).serialize(), {
+			append: true,
+		});
 	}
 	if (!session) {
-		c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), { append: true });
+		c.header("Set-Cookie", lucia.createBlankSessionCookie().serialize(), {
+			append: true,
+		});
 	}
 	c.set("session", session);
 	c.set("user", user);
 	return next();
 });
 
-const routes = app.basePath("/api").route("/auth", authRouter);
+const routes = app
+	.basePath("/api")
+	.route("/auth", authRouter)
+	.route("/posts", postRouter);
 
 app.onError((err, c) => {
 	if (err instanceof HTTPException) {

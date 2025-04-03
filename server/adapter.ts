@@ -3,7 +3,10 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 import * as v from "valibot";
-import { sessionTable, userTable } from "./db/schemas/auth";
+import { sessionTable, userRelations, userTable } from "./db/schemas/auth";
+import { postsRelations, postsTable } from "./db/schemas/posts";
+import { commentRelations, commentsTable } from "./db/schemas/comments";
+import { commentUpvoteRelations, commentUpvotesTable, postUpvoteRelations, postUpvotesTable } from "./db/schemas/upvotes";
 
 const EnvSchema = v.object({
 	DATABASE_URL: v.pipe(v.string(), v.url("URL is badly formatted")),
@@ -15,6 +18,15 @@ export const db = drizzle(queryClient, {
 	schema: {
 		user: userTable,
 		session: sessionTable,
+		posts: postsTable,
+		comments: commentsTable,
+		postUpvotes: postUpvotesTable,
+		commentUpvotes: commentUpvotesTable,
+		postsRelations,
+		commentUpvoteRelations,
+		postUpvoteRelations,
+		userRelations,
+		commentRelations
 	},
 });
 export const adapter = new DrizzlePostgreSQLAdapter(
