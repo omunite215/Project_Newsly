@@ -1,22 +1,15 @@
-import { ThemeProvider, useColorScheme } from "@mui/material";
-import type { Theme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
 import type { ReactNode } from "@tanstack/react-router";
-import { DarkTheme, LightTheme } from "./themes";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "./themes";
 
 const CustomMaterialThemeProvider = ({ children }: { children: ReactNode }) => {
-	const { mode } = useColorScheme();
-	let currentMode: null | Theme = null;
-	switch (mode) {
-		case "light":
-			currentMode = LightTheme;
-			break;
-		case "dark":
-			currentMode = DarkTheme;
-			break;
-		case "system":
-			
-	}
-	return <ThemeProvider theme={DarkTheme}>{children}</ThemeProvider>;
+	return (
+		<ThemeProvider defaultMode="system" theme={theme}>
+			<CssBaseline />
+			{children}
+		</ThemeProvider>
+	);
 };
 
 export default CustomMaterialThemeProvider;
