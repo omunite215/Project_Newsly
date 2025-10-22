@@ -1,3 +1,4 @@
+export type { ApiRoutes } from "../server/index";
 export type SuccessResponse<T = void> = {
 	success: true;
 	message: string;

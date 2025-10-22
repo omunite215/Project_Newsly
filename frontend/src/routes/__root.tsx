@@ -1,4 +1,4 @@
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
+import { Link, Outlet, createRootRoute, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import CustomMaterialThemeProvider from "@/components/ui/provider";
@@ -7,8 +7,13 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import {type QueryClient } from "@tanstack/react-query";
 
-export const Route = createRootRoute({
+interface RouterContext {
+	queryClient: QueryClient
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 });
 
@@ -26,7 +31,7 @@ function RootComponent() {
 					}}
 				>
           <Header/>
-					<Container component="main" sx={{ p: 16, flexGrow: 1 }}>
+					<Container component="main" sx={{ flexGrow: 1 }}>
 						<Outlet />
 					</Container>
           <Footer/>
