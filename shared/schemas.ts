@@ -48,8 +48,8 @@ export type SortBy = z.infer<typeof sortBySchema>;
 export type Order = z.infer<typeof orderSchema>;
 
 export const paginationSchema = z.object({
-  limit: z.number().int().nonnegative().optional().default(10),
-  page: z.number().int().nonnegative().optional().default(1),
+  limit: z.coerce.number().optional().default(10),
+  page: z.coerce.number().optional().default(1),
   sortBy: sortBySchema.optional().default("points"),
   order: orderSchema.optional().default("desc"),
   author: z.optional(z.string()),

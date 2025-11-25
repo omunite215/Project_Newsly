@@ -64,6 +64,7 @@ export const postRouter = new Hono<Context>()
     const user = c.get("user");
 
     const offset = (page - 1) * limit;
+
     const sortByColumn =
       sortBy === "points" ? postsTable.points : postsTable.createdAt;
     const sortOrder = order === "desc" ? desc(sortByColumn) : asc(sortByColumn);
@@ -106,11 +107,12 @@ export const postRouter = new Hono<Context>()
 
     if (user) {
       //EP
+      console.log(user.id)
       postsQuery.leftJoin(
         postUpvotesTable,
         and(
           eq(postUpvotesTable.postId, postsTable.id),
-          eq(postUpvotesTable.userId, Number(user.id))
+          eq(postUpvotesTable.userId, user.id)
         )
       );
     }
