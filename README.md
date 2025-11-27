@@ -14,6 +14,6 @@ Step-9 - Layouts and Helpers (completed)
 Step-10 - Auth Routes (completed)
 Step-11 - Homepage Posts (completed)
 Step-12 - Submit Post Form (completed)
-Step-13 - Setup Posts Page
+Step-13 - Setup Posts Page (completed)
 Step-14 - Loaders and Checks
 Step-15 - Deployment

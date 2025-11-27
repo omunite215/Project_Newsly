@@ -27,7 +27,7 @@ export const loginSchema = z.object({
 });
 
 export const checkIdSchema = z.object({
-  id: z.number().int().positive(),
+  id: z.coerce.number().int().positive(),
 });
 
 export const createPostSchema = insertPostSchema

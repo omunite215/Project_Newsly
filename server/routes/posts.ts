@@ -146,7 +146,7 @@ export const postRouter = new Hono<Context>()
           .where(
             and(
               eq(postUpvotesTable.postId, id),
-              eq(postUpvotesTable.userId, Number(user.id))
+              eq(postUpvotesTable.userId, user.id)
             )
           )
           .limit(1);
@@ -167,7 +167,7 @@ export const postRouter = new Hono<Context>()
           // EP
           await tx
             .insert(postUpvotesTable)
-            .values({ postId: id, userId: Number(user.id) });
+            .values({ postId: id, userId: user.id });
         }
         return updated.points;
       });
@@ -340,6 +340,7 @@ export const postRouter = new Hono<Context>()
         title: postsTable.title,
         url: postsTable.url,
         points: postsTable.points,
+        content: postsTable.content,
         createdAt: getISOFormatDateQuery(postsTable.createdAt),
         commentCount: postsTable.commentCount,
         author: {
@@ -360,7 +361,7 @@ export const postRouter = new Hono<Context>()
         postUpvotesTable,
         and(
           eq(postUpvotesTable.postId, postsTable.id),
-          eq(postUpvotesTable.userId, Number(user.id))
+          eq(postUpvotesTable.userId, user.id)
         )
       );
     }
