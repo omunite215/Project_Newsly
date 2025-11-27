@@ -12,8 +12,8 @@ Step-7 - Comments Route (completed)
 Step-8 - Frontend Setup (completed)
 Step-9 - Layouts and Helpers (completed)
 Step-10 - Auth Routes (completed)
-Step-11 - Homepage Posts
-Step-12 - Submit Post Form
+Step-11 - Homepage Posts (completed)
+Step-12 - Submit Post Form (completed)
 Step-13 - Setup Posts Page
 Step-14 - Loaders and Checks
 Step-15 - Deployment

@@ -9,6 +9,7 @@ import { getPosts } from "@/lib/api";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import SortBar from "@/components/SortBar";
 import { PostCard } from "@/components/PostCard";
+import { useUpvotePost } from "@/lib/api-hooks";
 
 const homeSearchSchema = z.object({
   sortBy: z
@@ -71,7 +72,7 @@ function HomeComponent() {
     useSuspenseInfiniteQuery(
       postsInfiniteQueryOptions({ sortBy, order, author, site })
     );
-  console.log(data);
+  const upvoteMutation = useUpvotePost();
   return (
     <>
       <Typography variant="h2" gutterBottom sx={{ marginTop: 10 }}>

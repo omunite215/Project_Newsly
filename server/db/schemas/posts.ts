@@ -28,7 +28,6 @@ export const insertPostSchema = createInsertSchema(postsTable, {
   url: z
     .string()
     .trim()
-    .url({ message: "URL must be a valid URL" })
     .optional()
     .or(z.literal("")),
   content: z.string().optional(),
