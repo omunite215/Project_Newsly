@@ -167,6 +167,13 @@ export async function getComments(
     order?: Order;
   }
 ) {
+  console.log({
+      page: page.toString(),
+      limit: limit.toString(),
+      includeChildren: "true",
+      sortBy: pagination.sortBy,
+      order: pagination.order,
+    })
   const res = await client.posts[":id"].comments.$get({
     param: {
       id: id.toString(),

@@ -1,68 +1,117 @@
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
-import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
-import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
-import FlashOnRoundedIcon from "@mui/icons-material/FlashOnRounded";
-import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import { useRef } from "react";
+import {
+  Box,
+  Stack,
+  Typography,
+  Avatar,
+  useTheme,
+  alpha,
+} from "@/components/common/mui";
+import {
+  TrendingUpRounded,
+  ForumRounded,
+  FlashOnRounded,
+  StarRounded,
+} from "@mui/icons-material";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 const items = [
   {
-    icon: <TrendingUpRoundedIcon sx={{ color: "text.secondary" }} />,
-    title: "Stay on Top of Tech",
-    description:
-      "Get the latest stories in technology, startups, and coding communities — updated in real time.",
+    icon: <TrendingUpRounded fontSize="small" />,
+    title: "Stay Updated",
+    description: "Real-time stories from tech, startups, and dev communities.",
   },
   {
-    icon: <ForumRoundedIcon sx={{ color: "text.secondary" }} />,
-    title: "Join the Conversation",
-    description:
-      "Discuss news, share insights, and connect with developers and tech enthusiasts around the world.",
+    icon: <ForumRounded fontSize="small" />,
+    title: "Join Discussions",
+    description: "Connect with developers and enthusiasts worldwide.",
   },
   {
-    icon: <FlashOnRoundedIcon sx={{ color: "text.secondary" }} />,
-    title: "Fast & Simple",
-    description:
-      "Newzly keeps things clean and fast — no clutter, just the stories that matter most to you.",
+    icon: <FlashOnRounded fontSize="small" />,
+    title: "Fast & Clean",
+    description: "No clutter. Just the stories that matter most to you.",
   },
   {
-    icon: <StarRoundedIcon sx={{ color: "text.secondary" }} />,
-    title: "Powered by the Community",
-    description:
-      "Upvote, comment, and curate the front page together — Newzly grows with your contributions.",
+    icon: <StarRounded fontSize="small" />,
+    title: "Curate",
+    description: "Upvote and comment to shape the front page.",
   },
 ];
 
 export default function SignupContent() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+
+  useGSAP(() => {
+    if (containerRef.current) {
+        gsap.fromTo(containerRef.current.children, 
+            { y: 10, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
+        );
+    }
+  }, []);
+
   return (
-    <Stack
-      sx={{
-        flexDirection: "column",
-        alignSelf: "center",
-        gap: 4,
-        maxWidth: 450,
-      }}
-    >
-      <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
-        <NewspaperIcon color="primary" />
-        <Typography variant="h6" fontWeight="medium">
-          Newsly
+    <Stack spacing={4} ref={containerRef} sx={{ px: 2 }}>
+      {/* Brand Header */}
+      <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Box 
+                sx={{ 
+                    width: 40, 
+                    height: 40, 
+                    bgcolor: 'primary.main', 
+                    borderRadius: 1.5,
+                    display: 'grid',
+                    placeItems: 'center',
+                    color: 'white',
+                    fontWeight: 700,
+                    fontSize: '1.2rem',
+                    boxShadow: theme.shadows[4]
+                }} 
+            >
+                N
+            </Box>
+            <Typography variant="h4" fontWeight={800} letterSpacing="-0.5px">
+                Join Newsly
+            </Typography>
+        </Box>
+        <Typography variant="h6" color="text.secondary" fontWeight={400}>
+            Create an account to start your journey.
         </Typography>
       </Box>
-      {items.map((item) => (
-        <Stack key={item.title} direction="row" sx={{ gap: 2 }}>
-          {item.icon}
-          <div>
-            <Typography gutterBottom sx={{ fontWeight: "medium" }}>
-              {item.title}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {item.description}
-            </Typography>
-          </div>
-        </Stack>
-      ))}
+
+      {/* Feature List */}
+      <Stack spacing={3}>
+        {items.map((item) => (
+          <Stack
+            key={item.title}
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+          >
+            <Avatar
+                sx={{
+                    bgcolor: alpha(theme.palette.primary.main, 0.1),
+                    color: theme.palette.primary.main,
+                    width: 40,
+                    height: 40,
+                }}
+            >
+                {item.icon}
+            </Avatar>
+            <Box>
+              <Typography variant="subtitle1" fontWeight={600}>
+                {item.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {item.description}
+              </Typography>
+            </Box>
+          </Stack>
+        ))}
+      </Stack>
     </Stack>
   );
 }

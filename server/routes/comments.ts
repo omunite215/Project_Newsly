@@ -116,7 +116,7 @@ export const commentsRouter = new Hono<Context>()
           .where(
             and(
               eq(commentUpvotesTable.commentId, id),
-              eq(commentUpvotesTable.userId, Number(user.id))
+              eq(commentUpvotesTable.userId, user.id)
             )
           )
           .limit(1);
@@ -137,7 +137,7 @@ export const commentsRouter = new Hono<Context>()
           // EP
           await tx
             .insert(commentUpvotesTable)
-            .values({ commentId: id, userId: Number(user.id) });
+            .values({ commentId: id, userId: user.id });
         }
         return updated.points;
       });
@@ -194,7 +194,7 @@ export const commentsRouter = new Hono<Context>()
             limit: 1,
             columns: { userId: true },
             //EP
-            where: eq(commentUpvotesTable.userId, Number(user.id)),
+            where: eq(commentUpvotesTable.userId, user?.id ?? ""),
           },
         },
         extras: {

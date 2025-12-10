@@ -1,10 +1,20 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { fallback, zodSearchValidator } from "@tanstack/router-zod-adapter";
-import type { Theme } from "@mui/material";
-import Stack from "@mui/material/Stack";
-import SignupContent from "@/components/signup/SignupContent";
-import SignupForm from "@/components/signup/SignupForm";
 import { z } from "zod";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+// Components
+import { SignupContent, SignupForm } from "@/components";
+import {
+  Box,
+  Stack,
+  Container,
+  useTheme,
+} from "@/components/common/mui";
+
+// Logic
 import { userQueryOptions } from "@/lib/api";
 
 const signupSearchSchema = z.object({
@@ -13,7 +23,7 @@ const signupSearchSchema = z.object({
 
 export const Route = createFileRoute("/signup")({
   component: Signup,
-   beforeLoad: async ({ context, search }) => {
+  beforeLoad: async ({ context, search }) => {
     const user = await context.queryClient.ensureQueryData(userQueryOptions());
     if (user) {
       throw redirect({ to: search.redirect });
@@ -23,57 +33,62 @@ export const Route = createFileRoute("/signup")({
 });
 
 function Signup() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+
+  // GSAP: Clean Entrance
+  useGSAP(() => {
+    if (containerRef.current) {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      
+      tl.fromTo(containerRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8 }
+      );
+    }
+  }, []);
+
   return (
-    <Stack
-      direction="column"
-      component="main"
-      sx={[
-        {
-          justifyContent: "center",
-          height: "calc((1 - var(--template-frame-height, 0)) * 100%)",
-          marginTop: "max(40px - var(--template-frame-height, 0px), 0px)",
-          minHeight: "100%",
-        },
-        (theme: Theme) => ({
-          "&::before": {
-            content: '""',
-            display: "block",
-            position: "absolute",
-            zIndex: -1,
-            inset: 0,
-            backgroundImage:
-              "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-            backgroundRepeat: "no-repeat",
-            ...theme.applyStyles("dark", {
-              backgroundImage:
-                "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-            }),
-          },
-        }),
-      ]}
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 64px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
+        position: "relative",
+      }}
     >
-      <Stack
-        direction={{ xs: "column-reverse", md: "row" }}
-        sx={{
-          justifyContent: "center",
-          gap: { xs: 6, sm: 12 },
-          p: 2,
-          mx: "auto",
-        }}
-      >
+      <Container maxWidth="lg" ref={containerRef}>
         <Stack
-          direction={{ xs: "column-reverse", md: "row" }}
-          sx={{
-            justifyContent: "center",
-            gap: { xs: 6, sm: 12 },
-            p: { xs: 2, sm: 4 },
-            m: "auto",
-          }}
+          direction={{ xs: "column", md: "row" }}
+          alignItems="center"
+          justifyContent="center"
+          spacing={{ xs: 4, md: 8, lg: 12 }}
+          sx={{ py: 4 }}
         >
-          <SignupContent />
-          <SignupForm/>
+          {/* LEFT SIDE: Content (Hidden on Mobile) */}
+          <Box sx={{ display: { xs: "none", md: "block" }, flex: 1 }}>
+            <SignupContent />
+          </Box>
+
+          {/* VERTICAL DIVIDER (Desktop Only) */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "block" },
+              height: "400px",
+              width: "1px",
+              bgcolor: theme.palette.divider,
+              opacity: 0.5
+            }}
+          />
+
+          {/* RIGHT SIDE: Form */}
+          <Box sx={{ flex: 1, width: "100%", maxWidth: "420px" }}>
+            <SignupForm />
+          </Box>
         </Stack>
-      </Stack>
-    </Stack>
+      </Container>
+    </Box>
   );
 }

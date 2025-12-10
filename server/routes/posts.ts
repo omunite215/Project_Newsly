@@ -11,7 +11,6 @@ import {
   paginationSchema,
   checkIdSchema,
   createCommentSchema,
-  commentPaginationSchema,
 } from "@/shared/schemas";
 import type {
   Comment,
@@ -33,6 +32,7 @@ import {
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { User } from "lucia";
+import z from "zod";
 
 export const postRouter = new Hono<Context>()
   .post("/", loggedIn, zValidator("form", createPostSchema), async (c) => {
@@ -107,7 +107,6 @@ export const postRouter = new Hono<Context>()
 
     if (user) {
       //EP
-      console.log(user.id)
       postsQuery.leftJoin(
         postUpvotesTable,
         and(
@@ -236,9 +235,14 @@ export const postRouter = new Hono<Context>()
   .get(
     "/:id/comments",
     zValidator("param", checkIdSchema),
-    zValidator("query", commentPaginationSchema),
+    zValidator(
+      "query",
+      paginationSchema.extend({
+        includeChildren: z.boolean({ coerce: true }).optional(),
+      })
+    ),
     async (c) => {
-      const user = c.get("user") as User;
+      const user = c.get("user");
       const { id } = c.req.valid("param");
       const { limit, page, sortBy, order, includeChildren } =
         c.req.valid("query");
@@ -283,7 +287,7 @@ export const postRouter = new Hono<Context>()
             limit: 1,
             columns: { userId: true },
             //EP
-            where: eq(commentUpvotesTable.userId, Number(user.id)),
+            where: eq(commentUpvotesTable.userId, user?.id ?? ""),
           },
           childComments: {
             limit: includeChildren ? 2 : 0,
@@ -298,7 +302,7 @@ export const postRouter = new Hono<Context>()
                 limit: 1,
                 columns: { userId: true },
                 //EP
-                where: eq(commentUpvotesTable.userId, Number(user.id)),
+                where: eq(commentUpvotesTable.userId, user?.id ?? ""),
               },
             },
             orderBy: sortOrder,

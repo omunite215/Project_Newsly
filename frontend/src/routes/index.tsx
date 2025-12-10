@@ -7,8 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { getPosts } from "@/lib/api";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import SortBar from "@/components/SortBar";
-import { PostCard } from "@/components/PostCard";
+import { PostCard, SortBar } from "@/components";
 import { useUpvotePost } from "@/lib/api-hooks";
 
 const homeSearchSchema = z.object({

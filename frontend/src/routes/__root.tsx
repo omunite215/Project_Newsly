@@ -1,18 +1,21 @@
-import {
-  Link,
-  Outlet,
-  createRootRoute,
-  createRootRouteWithContext,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import CustomMaterialThemeProvider from "@/components/ui/provider";
-import { Button } from "@mui/material";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { type QueryClient } from "@tanstack/react-query";
+import {
+  Box,
+  Container,
+  Stack,
+  useMediaQuery,
+  useTheme,
+  ThemeSwitch,
+  CustomMaterialThemeProvider
+} from "@/components/common/mui";
+
+// Components
+import { Header, Footer, SnackbarProvider } from "@/components"; 
+
+// ----------------------------------------------------------------------
+// TYPES
+// ----------------------------------------------------------------------
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -22,28 +25,71 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 });
 
+// ----------------------------------------------------------------------
+// 1. ROOT COMPONENT (Providers)
+// ----------------------------------------------------------------------
+
 function RootComponent() {
   return (
-    <>
-      <CustomMaterialThemeProvider>
-        <Box
-          component="section"
+    <CustomMaterialThemeProvider>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        autoHideDuration={3000}
+      >
+        <AppShell />
+      </SnackbarProvider>
+    </CustomMaterialThemeProvider>
+  );
+}
+
+// ----------------------------------------------------------------------
+// 2. APP SHELL (Layout Logic)
+// ----------------------------------------------------------------------
+
+function AppShell() {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column", // Vertical Stack only
+        minHeight: "100vh",
+        bgcolor: "background.default",
+        color: "text.primary",
+        transition: "background-color 0.3s ease",
+      }}
+    >
+        {/* HEADER
+            - Pass ThemeSwitch as child (rendered only on mobile by Header logic)
+        */}
+        <Header>
+           {!isDesktop && <ThemeSwitch floating={false} size="small" />}
+        </Header>
+
+        {/* MAIN CONTENT */}
+        <Container
+          component="main"
+          maxWidth="xl" // 'lg' (1200px) is usually better for reading lists than 'xl'
           sx={{
+            flexGrow: 1,
+            py: { xs: 3, md: 4 },
             display: "flex",
-            minHeight: "100vh",
             flexDirection: "column",
-            background: "background.main",
           }}
         >
-          <Header />
-          <Container maxWidth="xl" component="main" sx={{ flexGrow: 1 }}>
-            <Outlet />
-          </Container>
-          <Footer />
-        </Box>
-      </CustomMaterialThemeProvider>
-      <ReactQueryDevtools />
-      <TanStackRouterDevtools position="bottom-left" />
-    </>
+          <Outlet />
+        </Container>
+
+        <Footer />
+
+        {/* FLOATING THEME SWITCH (Desktop Only) */}
+        {isDesktop && <ThemeSwitch floating={true} />}
+    </Box>
   );
 }
