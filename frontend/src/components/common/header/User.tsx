@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import {
   Box,
   Avatar,
@@ -9,15 +9,17 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  ButtonLink
+  ButtonLink,
+  Logout,
+  Person,
+  Login
 } from "@/components/common/mui";
-import { Logout, Person, Login } from "@mui/icons-material";
 
 const UserMenu = ({ user }: { user: string | null }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   
@@ -26,7 +28,6 @@ const UserMenu = ({ user }: { user: string | null }) => {
   };
 
   if (!user) {
-    // ✅ Using Custom ButtonLink for Navigation
     return (
       <ButtonLink
         to="/login"
@@ -65,7 +66,6 @@ const UserMenu = ({ user }: { user: string | null }) => {
           </Avatar>
         </IconButton>
       </Tooltip>
-      
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -102,8 +102,6 @@ const UserMenu = ({ user }: { user: string | null }) => {
           </ListItemIcon>
           Profile
         </MenuItem>
-        
-        {/* Logout hits the server directly, so we use component="a" */}
         <MenuItem component="a" href="/api/auth/logout">
           <ListItemIcon>
             <Logout fontSize="small" color="error" />

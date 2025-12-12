@@ -8,23 +8,16 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
-  alpha,
-  CircularProgress
-} from "@/components/common/mui";
-import {
   Add,
   Remove,
   KeyboardArrowUp,
   ChatBubbleOutline,
-} from "@mui/icons-material";
-
-import { Comment } from "@/shared/types";
+} from "@/components/common/mui";
 import { getCommentComments, userQueryOptions } from "@/lib/api";
-import { useUpvoteComment } from "@/lib/api-hooks";
 import { relativeTime } from "@/lib/utils";
 import CommentForm from "./CommentForm";
+import { CommentCardProps } from "@/lib/types";
 
-// Helper for fetching nested comments
 const nestedCommentsQueryOptions = (commentId: number) => ({
     queryKey: ["comments", "comment", commentId],
     queryFn: ({ pageParam }: { pageParam: number }) => getCommentComments(commentId, pageParam),
@@ -34,15 +27,6 @@ const nestedCommentsQueryOptions = (commentId: number) => ({
       return lastPageParam + 1;
     },
 });
-
-type CommentCardProps = {
-  comment: Comment;
-  depth: number;
-  activeReplyId: number | null;
-  setActiveReplyId: React.Dispatch<React.SetStateAction<number | null>>;
-  isLast: boolean;
-  toggleUpvote: ReturnType<typeof useUpvoteComment>["mutate"];
-};
 
 export function CommentCard({
   comment,
@@ -55,10 +39,7 @@ export function CommentCard({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
   const { data: user } = useQuery(userQueryOptions());
-
-  // Only fetch children if not collapsed and has count
   const {
     data: comments,
     hasNextPage,
@@ -66,7 +47,6 @@ export function CommentCard({
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery({
     ...nestedCommentsQueryOptions(comment.id),
-    // Pre-seed initial data if available from parent
     initialData: {
       pageParams: [1],
       pages: [{
@@ -77,12 +57,9 @@ export function CommentCard({
       }]
     }
   });
-
   const isUpvoted = comment.commentUpvotes.length > 0;
   const isReplying = activeReplyId === comment.id;
   const isDraft = comment.id === -1;
-
-  // Indentation Logic
   const indentSize = isMobile ? 12 : 24;
   const showGuideLine = depth > 0;
 
@@ -95,7 +72,6 @@ export function CommentCard({
         transition: 'opacity 0.2s',
       }}
     >
-      {/* Thread Guide Line */}
       {showGuideLine && (
           <Box 
             sx={{
@@ -105,14 +81,12 @@ export function CommentCard({
                 bottom: 0,
                 width: '1px',
                 bgcolor: theme.palette.divider,
-                // On last item, stop line halfway so it looks like an "L"
                 ...(isLast && { bottom: 'auto', height: '24px' })
             }}
           />
       )}
 
       <Box sx={{ py: 1.5 }}>
-        {/* Header Row */}
         <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
             <IconButton 
                 size="small" 
@@ -126,23 +100,18 @@ export function CommentCard({
             >
                 {isCollapsed ? <Add sx={{ fontSize: 14 }} /> : <Remove sx={{ fontSize: 14 }} />}
             </IconButton>
-
             <Typography variant="subtitle2" fontWeight={600} color="text.primary">
                 {comment.author.username}
             </Typography>
-            
             <Typography variant="caption" color="text.secondary">
                 {relativeTime(comment.createdAt)}
             </Typography>
         </Stack>
-
         {!isCollapsed && (
             <Box sx={{ pl: isMobile ? 0 : 3.5 }}>
                 <Typography variant="body2" color="text.primary" sx={{ mb: 1, whiteSpace: 'pre-wrap' }}>
                     {comment.content}
                 </Typography>
-
-                {/* Actions */}
                 <Stack direction="row" spacing={2} alignItems="center">
                     <Button
                         size="small"
@@ -162,7 +131,6 @@ export function CommentCard({
                     >
                         {comment.points}
                     </Button>
-
                     {user && (
                         <Button
                             size="small"
@@ -175,8 +143,6 @@ export function CommentCard({
                         </Button>
                     )}
                 </Stack>
-
-                {/* Reply Form */}
                 {isReplying && (
                     <Box sx={{ mt: 2, mb: 2 }}>
                         <CommentForm 
@@ -189,8 +155,6 @@ export function CommentCard({
             </Box>
         )}
       </Box>
-
-      {/* Nested Comments */}
       {!isCollapsed && (
           <Box>
               {comments.pages.map(page => 
@@ -205,8 +169,7 @@ export function CommentCard({
                           toggleUpvote={toggleUpvote}
                       />
                   ))
-              )}
-              
+              )}  
               {hasNextPage && (
                   <Button 
                     size="small" 

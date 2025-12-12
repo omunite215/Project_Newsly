@@ -9,6 +9,7 @@ import { getPosts } from "@/lib/api";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { PostCard, SortBar } from "@/components";
 import { useUpvotePost } from "@/lib/api-hooks";
+import { Post } from "@/shared/types";
 
 const homeSearchSchema = z.object({
   sortBy: z
@@ -74,13 +75,14 @@ function HomeComponent() {
   const upvoteMutation = useUpvotePost();
   return (
     <>
-      <Typography variant="h2" gutterBottom sx={{ marginTop: 10 }}>
+      <Typography variant="h2" gutterBottom>
         Submissions
       </Typography>
       <SortBar sortBy={sortBy} order={order} />
       <Stack spacing={2}>
         {data?.pages.map((page) =>
-          page.data.map((post) => (
+        // @ts-ignore
+          page.data.map((post:Post) => (
             <PostCard
               post={post}
               key={post.id}

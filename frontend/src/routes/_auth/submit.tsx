@@ -38,7 +38,7 @@ import {
 } from "@mui/icons-material";
 
 // Custom
-import { enqueueSnackbar } from "@/components"; // Use your global snackbar wrapper
+import { enqueueSnackbar } from "@/components";
 
 export const Route = createFileRoute("/_auth/submit")({
   component: Submit,

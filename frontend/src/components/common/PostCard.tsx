@@ -10,13 +10,13 @@ import {
   useTheme,
   alpha,
   Link,
-  MuiLink, // Necessary for external URLs (Google, NYT, etc.)
+  MuiLink,
+  KeyboardArrowUp,
+  ChatBubbleOutline,
 } from "@/components/common/mui";
-import { KeyboardArrowUp, ChatBubbleOutline } from "@mui/icons-material";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-// Logic & Types
 import { Post } from "@/shared/types";
 import { userQueryOptions } from "@/lib/api";
 import { relativeTime } from "@/lib/utils";
@@ -31,22 +31,18 @@ export const PostCard = ({
   const { data: user } = useQuery(userQueryOptions());
   const theme = useTheme();
 
-  // 1. Scoping Ref for GSAP
   const containerRef = useRef<HTMLDivElement>(null);
   const upvoteBtnRef = useRef<HTMLButtonElement>(null);
 
-  // 2. Setup GSAP with contextSafe
   const { contextSafe } = useGSAP({ scope: containerRef });
 
   const handleUpvote = contextSafe((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!user) return; // Or trigger login modal
+    if (!user) return;
 
     onUpvote?.(post.id);
 
-    // GSAP Micro-interaction: Elastic Burst
     if (upvoteBtnRef.current) {
       gsap
         .timeline()
@@ -88,7 +84,6 @@ export const PostCard = ({
         position: "relative",
       }}
     >
-      {/* LEFT COLUMN: UPVOTE */}
       <Stack
         direction="column"
         alignItems="center"
@@ -124,13 +119,9 @@ export const PostCard = ({
           {post.points}
         </Typography>
       </Stack>
-
-      {/* RIGHT COLUMN: CONTENT */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        {/* A. TITLE ROW */}
         <Box sx={{ mb: 1 }}>
           {post.url ? (
-            // EXTERNAL LINK: Must use MuiLink/a tag, styled to match
             <MuiLink
               href={post.url}
               target="_blank"
@@ -148,10 +139,9 @@ export const PostCard = ({
               {post.title}
             </MuiLink>
           ) : (
-            // INTERNAL LINK: Use our Custom Link
             <Link
-              to="/"
-              params={{ postId: post.id.toString() }}
+              to="/post"
+              search={{ id: post.id }}
               style={{
                 fontWeight: 600,
                 fontSize: "1.125rem",
@@ -164,7 +154,6 @@ export const PostCard = ({
             </Link>
           )}
 
-          {/* Domain Chip */}
           {post.url && (
             <Box
               component="span"
@@ -175,7 +164,7 @@ export const PostCard = ({
                   label={getHostname(post.url)}
                   size="small"
                   variant="outlined"
-                  onClick={() => {}} // Dummy click to enable hover styles
+                  onClick={() => {}}
                   sx={{
                     height: 20,
                     fontSize: "0.7rem",
@@ -192,8 +181,6 @@ export const PostCard = ({
             </Box>
           )}
         </Box>
-
-        {/* B. CONTENT PREVIEW (Text posts) */}
         {post.content && !post.url && (
           <Typography
             variant="body2"
@@ -209,8 +196,6 @@ export const PostCard = ({
             {post.content}
           </Typography>
         )}
-
-        {/* C. METADATA ROW */}
         <Stack
           direction="row"
           alignItems="center"
@@ -218,9 +203,8 @@ export const PostCard = ({
           flexWrap="wrap"
           sx={{ mt: 1 }}
         >
-          {/* Author */}
           <Typography variant="caption" color="text.secondary">
-            by{" "}
+            by&nbsp;
             <Link
               to="/"
               search={{ author: post.author.id }}
@@ -234,7 +218,6 @@ export const PostCard = ({
             •
           </Typography>
 
-          {/* Time */}
           <Typography variant="caption" color="text.secondary">
             {relativeTime(post.createdAt)}
           </Typography>
@@ -242,11 +225,9 @@ export const PostCard = ({
           <Typography variant="caption" color="text.disabled">
             •
           </Typography>
-
-          {/* Comments Link (Custom Link) */}
           <Link
             to="/post"
-            params={{ postId: post.id.toString() }}
+            search={{ id: post.id }}
             linkVariant="subtle"
             style={{ display: "flex", alignItems: "center", gap: 4 }}
           >

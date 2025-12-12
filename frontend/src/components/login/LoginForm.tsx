@@ -4,8 +4,6 @@ import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-
-// UI Components
 import {
   TextField,
   Button,
@@ -17,23 +15,14 @@ import {
   CircularProgress,
   Stack,
   useTheme,
-  alpha,
   Divider,
   ButtonLink,
-} from "@/components/common/mui";
-
-// Icons
-import {
   Visibility,
   VisibilityOff,
   CheckCircle,
   Login,
-} from "@mui/icons-material";
-
-// Custom Components
+} from "@/components/common/mui";
 import { enqueueSnackbar } from "@/components";
-
-// Logic
 import { loginSchema } from "@/shared/schemas";
 import { postLogin } from "@/lib/api";
 import { Route } from "@/routes/login";
@@ -47,12 +36,8 @@ const LoginForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Refs for Animation
   const containerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
-  // GSAP: Subtle Entry
   useGSAP(() => {
     if (containerRef.current) {
       gsap.fromTo(
@@ -82,7 +67,6 @@ const LoginForm = () => {
           router.invalidate();
           await navigate({ to: search.redirect });
         } else {
-          // Shake Animation on Error
           if (formRef.current) {
             gsap.to(formRef.current, {
               keyframes: { x: [-5, 5, -5, 5, 0] },
@@ -115,7 +99,7 @@ const LoginForm = () => {
         borderRadius: 3,
         borderColor: "divider",
         backgroundColor: "background.paper",
-        boxShadow: theme.shadows[1], // Very subtle shadow
+        boxShadow: theme.shadows[1],
       }}
     >
       <Typography variant="h5" fontWeight={700} gutterBottom align="center">
@@ -139,7 +123,6 @@ const LoginForm = () => {
         }}
       >
         <Stack spacing={3}>
-          {/* USERNAME */}
           <form.Field
             name="username"
             validators={{
@@ -174,8 +157,6 @@ const LoginForm = () => {
               );
             }}
           </form.Field>
-
-          {/* PASSWORD */}
           <form.Field
             name="password"
             validators={{
@@ -184,7 +165,6 @@ const LoginForm = () => {
           >
             {(field) => {
               const hasError = field.state.meta.errors.length > 0;
-
               return (
                 <TextField
                   label="Password"
@@ -196,18 +176,26 @@ const LoginForm = () => {
                   error={hasError}
                   helperText={hasError ? field.state.meta.errors[0] : ""}
                   disabled={isSubmitting}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                          disabled={isSubmitting}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <>
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                              disabled={isSubmitting}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        </>
+                      ),
+                    },
                   }}
                 />
               );

@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { Order, SortBy } from "@/shared/schemas";
-import { KeyboardArrowDown } from "@mui/icons-material";
 import {
   FormControl,
   MenuItem,
+  KeyboardArrowDown,
   Select,
   type SelectChangeEvent,
   Typography,
@@ -20,8 +20,6 @@ const SortBar = ({ sortBy, order }: { sortBy: SortBy; order: Order }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const arrowRef = useRef<HTMLButtonElement>(null);
-
-  // Animate arrow rotation when order changes
   useGSAP(() => {
     if (arrowRef.current) {
       gsap.to(arrowRef.current, {

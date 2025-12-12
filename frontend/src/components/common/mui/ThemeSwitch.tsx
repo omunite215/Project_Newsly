@@ -6,53 +6,25 @@ import {
   alpha,
   Tooltip,
   useTheme,
-  type Theme,
-} from "@mui/material";
-import { LightMode, DarkMode, AutoMode } from "@mui/icons-material";
+  LightMode,
+  DarkMode,
+  AutoMode,
+} from "@/components/common/mui";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-// Ensure this path matches where you saved the provider
 import { useColorMode } from "./provider";
-
-// ============================================
-// Types
-// ============================================
-
-interface ThemeSwitchProps {
-  /** * If true, renders as a Fixed FAB (Desktop).
-   * If false, renders as a standard IconButton (Mobile Header).
-   */
-  floating?: boolean;
-  showAutoMode?: boolean;
-  size?: "small" | "medium" | "large";
-  className?: string; // Allow StyledWrapper to inject classes
-}
-
-interface SwitchContainerProps {
-  floating?: boolean;
-}
-
-interface RayProps {
-  index: number;
-  total: number;
-}
-
-interface ModeIndicatorProps {
-  active?: boolean;
-  mode: "light" | "dark" | "auto";
-}
-
-// ============================================
-// Styled Components
-// ============================================
+import {
+  ModeIndicatorProps,
+  RayProps,
+  SwitchContainerProps,
+  ThemeSwitchProps,
+} from "@/lib/types";
 
 const SwitchContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== "floating",
 })<SwitchContainerProps>(({ theme, floating }) => ({
   position: "relative",
   zIndex: theme.customZIndex?.overlay || 1300,
-
-  // Logic: If floating, pin to bottom right. If not, it flows naturally (for Header).
   ...(floating && {
     position: "fixed",
     bottom: 24,
@@ -76,8 +48,6 @@ const SwitchButton = styled(IconButton, {
   transition: theme.transitions.create(["all"], {
     duration: theme.transitions.duration.short,
   }),
-
-  // --- FAB STYLE (Desktop/Floating) ---
   ...(floating && {
     width: 56,
     height: 56,
@@ -94,12 +64,10 @@ const SwitchButton = styled(IconButton, {
       boxShadow: theme.shadows[8],
     },
   }),
-
-  // --- HEADER STYLE (Mobile/Static) ---
   ...(!floating && {
     width: 40,
     height: 40,
-    borderRadius: "50%", // Standard circular button for header
+    borderRadius: "50%",
     backgroundColor: "transparent",
     color: theme.palette.text.primary,
     border: `1px solid transparent`,
@@ -108,8 +76,6 @@ const SwitchButton = styled(IconButton, {
       backgroundColor: alpha(theme.palette.text.primary, 0.08),
     },
   }),
-
-  // Shared Active State
   "&:active": {
     transform: "scale(0.95)",
   },
@@ -120,8 +86,6 @@ const CircleOverlay = styled(Box, {
 })<{ themeColor: "light" | "dark" | "auto" }>(({ theme, themeColor }) => {
   const getOverlayColor = () => {
     if (themeColor === "auto") {
-      // In auto, we guess the OPPOSITE of current to flood the screen,
-      // but here we want to flood with the NEW color.
       return theme.palette.mode === "dark" ? "#FFFFFF" : "#202124";
     }
     return themeColor === "dark" ? "#202124" : "#FFFFFF";
@@ -134,7 +98,7 @@ const CircleOverlay = styled(Box, {
     width: "100vw",
     height: "100vh",
     pointerEvents: "none",
-    zIndex: (theme.customZIndex?.overlay || 1300) - 1, // Behind the button
+    zIndex: (theme.customZIndex?.overlay || 1300) - 1,
     backgroundColor: getOverlayColor(),
     clipPath: "circle(0% at 50% 50%)",
     willChange: "clip-path",
@@ -156,14 +120,14 @@ const Ray = styled(Box)<RayProps>(({ theme, index, total }) => {
   return {
     position: "absolute",
     width: 2,
-    height: 16, // Longer rays
+    height: 16,
     background: `linear-gradient(to top, 
       ${alpha(theme.palette.primary.main, 0)} 0%,
       ${alpha(theme.palette.primary.main, 0.8)} 50%,
       ${alpha(theme.palette.primary.main, 0)} 100%
     )`,
     borderRadius: 1,
-    transformOrigin: "center 28px", // Push rays further out
+    transformOrigin: "center 28px",
     rotate: `${angle}deg`,
     opacity: 0,
   };
@@ -202,10 +166,6 @@ const Ripple = styled(Box)(({ theme }) => ({
   pointerEvents: "none",
 }));
 
-// ============================================
-// Component
-// ============================================
-
 export const ThemeSwitch = ({
   floating = true,
   showAutoMode = true,
@@ -218,19 +178,16 @@ export const ThemeSwitch = ({
   const [overlayTheme, setOverlayTheme] = useState<"light" | "dark" | "auto">(
     "auto"
   );
-
-  // Refs with strict types
   const buttonRef = useRef<HTMLButtonElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const raysRef = useRef<(HTMLDivElement | null)[]>([]); // Array of refs
+  const raysRef = useRef<(HTMLDivElement | null)[]>([]);
   const rippleRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   const isDark = theme.palette.mode === "dark";
   const isSystem = mode === "system";
 
-  // Initial Entry Animation (Only if floating)
   useGSAP(() => {
     if (floating && buttonRef.current) {
       gsap.fromTo(
@@ -247,8 +204,6 @@ export const ThemeSwitch = ({
       );
     }
   }, [floating]);
-
-  // Helpers
   const getButtonCenter = useCallback(() => {
     if (!buttonRef.current) return { x: "50%", y: "50%" };
     const rect = buttonRef.current.getBoundingClientRect();
@@ -266,7 +221,6 @@ export const ThemeSwitch = ({
       return;
     }
 
-    // Staggered burst
     rays.forEach((ray, i) => {
       gsap.to(ray, {
         opacity: 1,
@@ -283,8 +237,6 @@ export const ThemeSwitch = ({
   const handleToggle = useCallback(() => {
     if (isAnimating || !overlayRef.current || !iconRef.current) return;
     setIsAnimating(true);
-
-    // 1. Determine Next Mode
     let newMode: typeof mode;
     if (showAutoMode) {
       if (mode === "light") newMode = "dark";
@@ -293,11 +245,7 @@ export const ThemeSwitch = ({
     } else {
       newMode = isDark ? "light" : "dark";
     }
-
-    // 2. Set overlay color to MATCH the destination
     setOverlayTheme(newMode === "system" ? "auto" : newMode);
-
-    // 3. Ripple Effect
     if (rippleRef.current && buttonRef.current) {
       const btn = buttonRef.current.getBoundingClientRect();
       const size = Math.max(btn.width, btn.height);
@@ -315,24 +263,18 @@ export const ThemeSwitch = ({
         { scale: 2.5, opacity: 0, duration: 0.5, ease: "power1.out" }
       );
     }
-
-    // 4. Calculate Screen Cover Geometry
     const { x, y } = getButtonCenter();
     const diagonal = Math.sqrt(
       window.innerWidth ** 2 + window.innerHeight ** 2
     );
-    // Factor 1.5 ensures corners are covered even if button is in corner
     const maxRadius =
       (diagonal / Math.min(window.innerWidth, window.innerHeight)) * 150;
-
-    // 5. Main Timeline
     if (tlRef.current) tlRef.current.kill();
 
     tlRef.current = gsap.timeline({
       onStart: () => animateRays(true),
       onComplete: () => {
         setIsAnimating(false);
-        // Reset clip path to center but invisible
         gsap.set(overlayRef.current, {
           clipPath: "circle(0% at 50% 50%)",
           opacity: 0,
@@ -341,10 +283,7 @@ export const ThemeSwitch = ({
     });
 
     tlRef.current
-      // A. Shrink Icon
       .to(iconRef.current, { scale: 0, rotation: -90, duration: 0.2 })
-
-      // B. Expand Overlay (The Flood)
       .to(
         overlayRef.current,
         {
@@ -353,17 +292,12 @@ export const ThemeSwitch = ({
           duration: 0.8,
           ease: "power3.inOut",
           onStart: () => {
-            // C. SWITCH THEME halfway through when screen is covered
             setTimeout(() => setMode(newMode), 350);
           },
         },
         "-=0.1"
       )
-
-      // D. Fade out overlay (revealing new theme underneath)
       .to(overlayRef.current, { opacity: 0, duration: 0.4 })
-
-      // E. Pop Icon Back
       .to(iconRef.current, {
         scale: 1,
         rotation: 0,
@@ -380,7 +314,6 @@ export const ThemeSwitch = ({
     animateRays,
   ]);
 
-  // UI Helpers
   const getTooltip = () => {
     if (isSystem) return "System Theme";
     return isDark ? "Dark Mode" : "Light Mode";
@@ -404,28 +337,22 @@ export const ThemeSwitch = ({
           disabled={isAnimating}
           floating={floating}
           sx={{
-            // Ensure Icon is sized relative to button
             fontSize: floating ? 24 : 20,
           }}
         >
           <Ripple ref={rippleRef} />
-
-          {/* Sun Rays (Only visible during animation) */}
           <RayContainer>
             {[...Array(8)].map((_, i) => (
               <Ray
                 key={i}
                 index={i}
                 total={8}
-                // ✅ FIX: Explicitly type 'el' as HTMLDivElement | null
                 ref={(el: HTMLDivElement | null) => {
                   raysRef.current[i] = el;
                 }}
               />
             ))}
           </RayContainer>
-
-          {/* Small dots indicating mode */}
           {showAutoMode && floating && (
             <>
               <ModeIndicator mode="light" active={mode === "light"} />
@@ -433,15 +360,11 @@ export const ThemeSwitch = ({
               <ModeIndicator mode="auto" active={mode === "system"} />
             </>
           )}
-
-          {/* Main Icon */}
           <Box ref={iconRef} display="flex">
             {getIcon()}
           </Box>
         </SwitchButton>
       </Tooltip>
-
-      {/* The Global Overlay */}
       <CircleOverlay ref={overlayRef} themeColor={overlayTheme} />
     </SwitchContainer>
   );

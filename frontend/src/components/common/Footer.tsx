@@ -11,7 +11,7 @@ const Footer = () => {
         bgcolor: "background.main",
         borderTop: 1,
         borderColor: "divider",
-        mt: "auto", // Push footer to bottom when content is short
+        mt: "auto",
       }}
     >
       <Typography

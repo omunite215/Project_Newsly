@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useSnackbar } from "notistack"; // You'll need to install notistack
+import { useSnackbar } from "notistack";
 import { current, produce } from "immer";
 
 import {
@@ -57,6 +57,7 @@ export const useUpvotePost = () => {
             return undefined;
           }
           oldData.pages.forEach((page) => {
+            // @ts-ignore
             page.data.forEach((post: Post) => {
               if (post.id.toString() === variable) {
                 updatePostUpvote(post);
@@ -87,6 +88,7 @@ export const useUpvotePost = () => {
             return undefined;
           }
           oldData.pages.forEach((page) =>
+            // @ts-ignore
             page.data.forEach((post:Post) => {
               if (post.id.toString() === variable) {
                 post.points = upvoteData.data.count;

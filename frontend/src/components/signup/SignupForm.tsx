@@ -18,13 +18,11 @@ import {
   useTheme,
   Divider,
   ButtonLink,
-} from "@/components/common/mui";
-import {
   Visibility,
   VisibilityOff,
   CheckCircle,
   PersonAdd,
-} from "@mui/icons-material";
+} from "@/components/common/mui";
 
 // Custom Components
 import { enqueueSnackbar } from "@/components";
@@ -162,12 +160,14 @@ const SignupForm = () => {
                   error={hasError}
                   helperText={hasError ? field.state.meta.errors[0] : ""}
                   disabled={isSubmitting}
-                  InputProps={{
-                    endAdornment: isValid && (
-                      <InputAdornment position="end">
-                        <CheckCircle color="success" fontSize="small" />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: isValid && (
+                        <InputAdornment position="end">
+                          <CheckCircle color="success" fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
               );
@@ -195,18 +195,20 @@ const SignupForm = () => {
                   error={hasError}
                   helperText={hasError ? field.state.meta.errors[0] : ""}
                   disabled={isSubmitting}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                          disabled={isSubmitting}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            disabled={isSubmitting}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
               );

@@ -12,40 +12,28 @@ import {
   Stack,
   useTheme,
   alpha,
-} from "@mui/material";
-import {
   Refresh,
   Home,
   BugReport,
   KeyboardArrowDown,
   KeyboardArrowUp,
   ContentCopy,
-} from "@mui/icons-material";
+  ButtonLink,
+} from "@/components/common/mui";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-
-// ✅ Use our consistent ButtonLink
-import { ButtonLink } from "@/components/common/mui";
 
 const ErrorPage = ({ error }: { error: Error }) => {
   const router = useRouter();
   const theme = useTheme();
   const isDev = import.meta.env.NODE_ENV !== "production";
-
-  // React Query logic
   const queryClientErrorBoundary = useQueryErrorResetBoundary();
   useEffect(() => {
     queryClientErrorBoundary.reset();
   }, [queryClientErrorBoundary]);
-
-  // Dev mode toggle
   const [showDetails, setShowDetails] = useState(false);
-
-  // Animation refs
   const containerRef = useRef<HTMLDivElement>(null);
   const graphicRef = useRef<HTMLImageElement>(null);
-
-  // GSAP Entrance
   useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -87,13 +75,11 @@ const ErrorPage = ({ error }: { error: Error }) => {
           py: 4,
         }}
       >
-        {/* 1. Illustration */}
         <Box
           component="img"
           ref={graphicRef}
-          src="/illustrations/error.svg" // Ensure this file exists, or use a fallback Icon
+          src="/illustrations/error.svg"
           onError={(e) => {
-            // Fallback if image fails to load
             e.currentTarget.style.display = "none";
           }}
           alt="Error Illustration"
@@ -101,26 +87,19 @@ const ErrorPage = ({ error }: { error: Error }) => {
             height: 200,
             width: 200,
             mb: 4,
-            // If image fails, this box won't take space due to display none above
           }}
         />
-
-        {/* Fallback Icon if image missing (Visual safety) */}
         <BugReport
           sx={{
             fontSize: 80,
             color: "text.secondary",
             mb: 2,
-            display: "none", // Remove this line if you don't have the SVG yet
-            // display: 'block' // Uncomment this if you don't have the SVG
+            display: "none",
           }}
         />
-
-        {/* 2. Main Text */}
         <Typography variant="h4" fontWeight={700} gutterBottom>
           Something went wrong
         </Typography>
-
         <Typography
           variant="body1"
           color="text.secondary"
@@ -129,8 +108,6 @@ const ErrorPage = ({ error }: { error: Error }) => {
           We encountered an unexpected error while loading this page. Please try
           refreshing or return home.
         </Typography>
-
-        {/* 3. Actions */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -150,7 +127,6 @@ const ErrorPage = ({ error }: { error: Error }) => {
           >
             Try Again
           </Button>
-
           <ButtonLink
             to="/"
             variant="outlined"
@@ -161,8 +137,6 @@ const ErrorPage = ({ error }: { error: Error }) => {
             Return Home
           </ButtonLink>
         </Stack>
-
-        {/* 4. Developer Details (Google Style Collapsible) */}
         {isDev && (
           <Box sx={{ width: "100%", mt: 6 }}>
             <Button
@@ -178,7 +152,6 @@ const ErrorPage = ({ error }: { error: Error }) => {
                 ? "Hide Developer Details"
                 : "Show Developer Details"}
             </Button>
-
             <Collapse in={showDetails}>
               <Paper
                 variant="outlined"
@@ -213,11 +186,9 @@ const ErrorPage = ({ error }: { error: Error }) => {
                     <ContentCopy fontSize="small" />
                   </IconButton>
                 </Stack>
-
                 <Typography variant="body2" fontWeight={500} gutterBottom>
                   {error.message}
                 </Typography>
-
                 <Box
                   component="pre"
                   sx={{

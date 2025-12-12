@@ -5,7 +5,6 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-// Components
 import { SignupContent, SignupForm } from "@/components";
 import {
   Box,
@@ -14,7 +13,6 @@ import {
   useTheme,
 } from "@/components/common/mui";
 
-// Logic
 import { userQueryOptions } from "@/lib/api";
 
 const signupSearchSchema = z.object({
@@ -36,7 +34,6 @@ function Signup() {
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
-  // GSAP: Clean Entrance
   useGSAP(() => {
     if (containerRef.current) {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -67,12 +64,10 @@ function Signup() {
           spacing={{ xs: 4, md: 8, lg: 12 }}
           sx={{ py: 4 }}
         >
-          {/* LEFT SIDE: Content (Hidden on Mobile) */}
           <Box sx={{ display: { xs: "none", md: "block" }, flex: 1 }}>
             <SignupContent />
           </Box>
 
-          {/* VERTICAL DIVIDER (Desktop Only) */}
           <Box
             sx={{
               display: { xs: "none", md: "block" },
@@ -83,7 +78,6 @@ function Signup() {
             }}
           />
 
-          {/* RIGHT SIDE: Form */}
           <Box sx={{ flex: 1, width: "100%", maxWidth: "420px" }}>
             <SignupForm />
           </Box>

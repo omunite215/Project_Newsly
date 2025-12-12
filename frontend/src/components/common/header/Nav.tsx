@@ -38,7 +38,6 @@ const MobileNav = ({
 
       <List sx={{ px: 2, flexGrow: 1 }}>
         {NAV_LINKS.map((link) => (
-          // ✅ Wrap ListItem with Custom Link
           <Link
             key={link.label}
             to={link.to}

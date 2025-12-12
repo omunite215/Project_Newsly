@@ -14,9 +14,6 @@ import "@fontsource/lexend/700.css";
 
 const themeCache = new Map<PaletteMode, Theme>();
 
-/* ============================================================================
-   CUSTOM TYPES
-============================================================================ */
 
 export interface CustomBorderRadius {
   none: number;
@@ -40,10 +37,6 @@ export interface CustomZIndex {
   overlay: number;
   toast: number;
 }
-
-/* ============================================================================
-   MUI MODULE AUGMENTATION
-============================================================================ */
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -140,9 +133,6 @@ const tokens = {
   error: "#EA4335",
 };
 
-/* ============================================================================
-   MOTION TOKENS (Google-like, GSAP-friendly)
-============================================================================ */
 
 const motion = {
   easing: "cubic-bezier(0.2, 0, 0, 1)",
@@ -153,9 +143,6 @@ const motion = {
   },
 };
 
-/* ============================================================================
-   CUSTOM PRIMITIVES
-============================================================================ */
 
 const customBorderRadius: CustomBorderRadius = {
   none: 0,
@@ -179,10 +166,6 @@ const customZIndex: CustomZIndex = {
   overlay: 1300,
   toast: 1400,
 };
-
-/* ============================================================================
-   HELPERS
-============================================================================ */
 
 const createStateLayer = (color: string) => ({
   hover: alpha(color, 0.08),

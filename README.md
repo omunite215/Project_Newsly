@@ -16,5 +16,5 @@ Step-11 - Homepage Posts (completed)
 Step-12 - Submit Post Form (completed)
 Step-13 - Setup Posts Page (completed)
 Step-14 - Loaders and Checks (completed)
-Step-15 - Fixing Front Errors
+Step-15 - Fixing Front End Errors (completed) 
 Step-16 - Final Code Optimization

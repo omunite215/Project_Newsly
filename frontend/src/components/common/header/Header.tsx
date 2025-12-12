@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, type ReactElement } from "react";
 import {
   AppBar,
   Box,
@@ -12,6 +12,7 @@ import {
   alpha,
   useScrollTrigger,
   Slide,
+  Newspaper,
   Link
 } from "@/components/common/mui";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +30,7 @@ import { HeaderProps } from "@/lib/types";
 
 const DRAWER_WIDTH = 280;
 
-function HideOnScroll(props: { children: React.ReactElement }) {
+function HideOnScroll(props: { children: ReactElement }) {
   const { children } = props;
   const trigger = useScrollTrigger();
   return (
@@ -94,7 +95,7 @@ const Header = (props: HeaderProps) => {
             </IconButton>
 
             {/* LOGO */}
-            <Box sx={{ display: "flex", mr: 4 }}>
+            <Box sx={{ display: "flex",alignItems:"center", gap:1, mr: 4 }}>
               <Link
                 ref={logoRef}
                 to="/"
@@ -119,8 +120,9 @@ const Header = (props: HeaderProps) => {
                     fontSize: "1.1rem",
                   }}
                 >
-                  N
+                  <Newspaper/>
                 </Box>
+              </Link>
                 <Typography
                   variant="h6"
                   noWrap
@@ -134,25 +136,17 @@ const Header = (props: HeaderProps) => {
                 >
                   Newsly
                 </Typography>
-              </Link>
             </Box>
-
-            {/* ✅ DESKTOP NAV LINKS (Restored) */}
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                 <NavLinks />
             </Box>
-
-            {/* RIGHT ACTIONS */}
+            <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {/* Mobile Switch Slot */}
               <Box sx={{ display: { md: "none" } }}>{children}</Box>
               <UserMenu user={user || null} />
             </Box>
-
           </Toolbar>
         </Container>
-
-        {/* MOBILE DRAWER */}
         <Drawer
           container={container}
           variant="temporary"
