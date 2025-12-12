@@ -6,83 +6,79 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 import { SignupContent, SignupForm } from "@/components";
-import {
-  Box,
-  Stack,
-  Container,
-  useTheme,
-} from "@/components/common/mui";
+import { Box, Stack, Container, useTheme } from "@/components/common/mui";
 
 import { userQueryOptions } from "@/lib/api";
 
 const signupSearchSchema = z.object({
-  redirect: fallback(z.string(), "/").default("/"),
+	redirect: fallback(z.string(), "/").default("/"),
 });
 
 export const Route = createFileRoute("/signup")({
-  component: Signup,
-  beforeLoad: async ({ context, search }) => {
-    const user = await context.queryClient.ensureQueryData(userQueryOptions());
-    if (user) {
-      throw redirect({ to: search.redirect });
-    }
-  },
-  validateSearch: zodSearchValidator(signupSearchSchema),
+	component: Signup,
+	beforeLoad: async ({ context, search }) => {
+		const user = await context.queryClient.ensureQueryData(userQueryOptions());
+		if (user) {
+			throw redirect({ to: search.redirect });
+		}
+	},
+	validateSearch: zodSearchValidator(signupSearchSchema),
 });
 
 function Signup() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const theme = useTheme();
+	const containerRef = useRef<HTMLDivElement>(null);
+	const theme = useTheme();
 
-  useGSAP(() => {
-    if (containerRef.current) {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      
-      tl.fromTo(containerRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8 }
-      );
-    }
-  }, []);
+	useGSAP(() => {
+		if (containerRef.current) {
+			const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-  return (
-    <Box
-      sx={{
-        minHeight: "calc(100vh - 64px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        position: "relative",
-      }}
-    >
-      <Container maxWidth="lg" ref={containerRef}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          alignItems="center"
-          justifyContent="center"
-          spacing={{ xs: 4, md: 8, lg: 12 }}
-          sx={{ py: 4 }}
-        >
-          <Box sx={{ display: { xs: "none", md: "block" }, flex: 1 }}>
-            <SignupContent />
-          </Box>
+			tl.fromTo(
+				containerRef.current,
+				{ opacity: 0 },
+				{ opacity: 1, duration: 0.8 },
+			);
+		}
+	}, []);
 
-          <Box
-            sx={{
-              display: { xs: "none", md: "block" },
-              height: "400px",
-              width: "1px",
-              bgcolor: theme.palette.divider,
-              opacity: 0.5
-            }}
-          />
+	return (
+		<Box
+			sx={{
+				minHeight: "calc(100vh - 64px)",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				bgcolor: "background.default",
+				position: "relative",
+			}}
+		>
+			<Container maxWidth="lg" ref={containerRef}>
+				<Stack
+					direction={{ xs: "column", md: "row" }}
+					alignItems="center"
+					justifyContent="center"
+					spacing={{ xs: 4, md: 8, lg: 12 }}
+					sx={{ py: 4 }}
+				>
+					<Box sx={{ display: { xs: "none", md: "block" }, flex: 1 }}>
+						<SignupContent />
+					</Box>
 
-          <Box sx={{ flex: 1, width: "100%", maxWidth: "420px" }}>
-            <SignupForm />
-          </Box>
-        </Stack>
-      </Container>
-    </Box>
-  );
+					<Box
+						sx={{
+							display: { xs: "none", md: "block" },
+							height: "400px",
+							width: "1px",
+							bgcolor: theme.palette.divider,
+							opacity: 0.5,
+						}}
+					/>
+
+					<Box sx={{ flex: 1, width: "100%", maxWidth: "420px" }}>
+						<SignupForm />
+					</Box>
+				</Stack>
+			</Container>
+		</Box>
+	);
 }

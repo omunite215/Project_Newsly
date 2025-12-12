@@ -7,39 +7,38 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { NotFound, ErrorPage } from "@/components";
 
 const queryClient = new QueryClient();
-// Set up a Router instance
+
 const router = createRouter({
-  routeTree,
-  defaultPreload: "intent",
-  defaultPreloadStaleTime: 0,
-  context: { queryClient },
-  defaultPendingComponent: () => (
-    <Backdrop
-      sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-      open
-    >
-      <CircularProgress color="primary" size="3.5rem" />
-    </Backdrop>
-  ),
-  defaultNotFoundComponent: NotFound,
-  defaultErrorComponent: ({ error }) => <ErrorPage error={error} />,
+	routeTree,
+	defaultPreload: "intent",
+	defaultPreloadStaleTime: 0,
+	context: { queryClient },
+	defaultPendingComponent: () => (
+		<Backdrop
+			sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+			open
+		>
+			<CircularProgress color="primary" size="3.5rem" />
+		</Backdrop>
+	),
+	defaultNotFoundComponent: NotFound,
+	defaultErrorComponent: ({ error }) => <ErrorPage error={error} />,
 });
 
-// Register things for typesafety
 declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
+	interface Register {
+		router: typeof router;
+	}
 }
 
 // biome-ignore lint/style/noNonNullAssertion: ROOT ELEMENT INIT
 const rootElement = document.getElementById("app")!;
 
 if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
+	const root = ReactDOM.createRoot(rootElement);
+	root.render(
+		<QueryClientProvider client={queryClient}>
+			<RouterProvider router={router} />
+		</QueryClientProvider>,
+	);
 }

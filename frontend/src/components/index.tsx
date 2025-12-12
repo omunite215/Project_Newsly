@@ -15,18 +15,18 @@ import ErrorPage from "./common/error";
 import NotFound from "./common/not-found";
 
 export {
-    enqueueSnackbar,
-    SnackbarProvider,
-    Header,
-    Footer,
-    LoginContent,
-    LoginForm,
-    SignupContent,
-    SignupForm,
-    PostCard,
-    CommentCard,
-    CommentForm,
-    SortBar,
-    ErrorPage,
-    NotFound
-}
+	enqueueSnackbar,
+	SnackbarProvider,
+	Header,
+	Footer,
+	LoginContent,
+	LoginForm,
+	SignupContent,
+	SignupForm,
+	PostCard,
+	CommentCard,
+	CommentForm,
+	SortBar,
+	ErrorPage,
+	NotFound,
+};

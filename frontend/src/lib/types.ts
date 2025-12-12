@@ -1,81 +1,80 @@
 import { type ReactNode, type SetStateAction, type Dispatch } from "react";
 import {
-  type LinkProps as MuiLinkProps,
-  type ButtonProps as MuiButtonProps,
+	type LinkProps as MuiLinkProps,
+	type ButtonProps as MuiButtonProps,
 } from "@mui/material";
 import { Comment } from "@/shared/types";
 import { useUpvoteComment } from "./api-hooks";
 
 export type NavLink = {
-  label: string;
-  to: string;
-  search?: Record<string, any>;
+	label: string;
+	to: string;
+	search?: Record<string, any>;
 };
 
 export type HeaderProps = {
-  window?: () => Window;
-  children: ReactNode;
+	window?: () => Window;
+	children: ReactNode;
 };
 
 export type LinkVariant =
-  | "default"
-  | "subtle"
-  | "highlight"
-  | "tonal"
-  | "elevated"
-  | "filled";
+	| "default"
+	| "subtle"
+	| "highlight"
+	| "tonal"
+	| "elevated"
+	| "filled";
 
-// Define our custom props
 export interface BaseNavigationProps {
-  loading?: boolean;
-  disableAnimation?: boolean;
-  iconStart?: ReactNode;
-  iconEnd?: ReactNode;
+	loading?: boolean;
+	disableAnimation?: boolean;
+	iconStart?: ReactNode;
+	iconEnd?: ReactNode;
 }
 
 export interface CustomLinkOwnProps
-  extends Omit<MuiLinkProps, "href" | "ref">,
-    BaseNavigationProps {
-  linkVariant?: LinkVariant;
+	extends Omit<MuiLinkProps, "href" | "ref">,
+		BaseNavigationProps {
+	linkVariant?: LinkVariant;
 }
 
 export interface CustomButtonLinkProps
-  extends Omit<MuiButtonProps, "href" | "ref" | "loading">,
-    BaseNavigationProps {}
+	extends Omit<MuiButtonProps, "href" | "ref" | "loading">,
+		BaseNavigationProps {}
 
 export type Mode = "light" | "dark" | "system";
 
 export type ColorModeContextType = {
-  mode: Mode;
-  setMode: (mode: Mode) => void;
+	mode: Mode;
+	setMode: (mode: Mode) => void;
 };
 
 export type ThemeSwitchProps = {
-  floating?: boolean;
-  showAutoMode?: boolean;
-  size?: "small" | "medium" | "large";
-  className?: string;
-}
+	floating?: boolean;
+	showAutoMode?: boolean;
+	size?: "small" | "medium" | "large";
+	className?: string;
+};
 
 export type SwitchContainerProps = {
-  floating?: boolean;
-}
+	floating?: boolean;
+};
 
 export type RayProps = {
-  index: number;
-  total: number;
-}
+	index: number;
+	total: number;
+};
 
 export type ModeIndicatorProps = {
-  active?: boolean;
-  mode: "light" | "dark" | "auto";
-}
+	active?: boolean;
+	mode: "light" | "dark" | "auto";
+};
 
 export type CommentCardProps = {
-  comment: Comment;
-  depth: number;
-  activeReplyId: number | null;
-  setActiveReplyId: Dispatch<SetStateAction<number | null>>;
-  isLast: boolean;
-  toggleUpvote: ReturnType<typeof useUpvoteComment>["mutate"];
+	comment: Comment;
+	depth: number;
+	activeReplyId: number | null;
+	setActiveReplyId: Dispatch<SetStateAction<number | null>>;
+	isLast: boolean;
+	toggleUpvote: ReturnType<typeof useUpvoteComment>["mutate"];
 };
