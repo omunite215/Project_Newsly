@@ -1,10 +1,10 @@
+import { fixupPluginRules } from "@eslint/compat";
+import js from "@eslint/js";
+import eslintBiomeConfig from "eslint-config-biome";
+import drizzlePlugin from "eslint-plugin-drizzle";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
-import js from "@eslint/js";
 import tseslint from "typescript-eslint";
-import drizzlePlugin from "eslint-plugin-drizzle";
-import eslintBiomeConfig from "eslint-config-biome";
-import { fixupPluginRules } from "@eslint/compat";
 
 export default defineConfig([
 	{ files: ["**/*.{js,mjs,cjs,ts}"] },

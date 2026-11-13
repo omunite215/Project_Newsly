@@ -1,12 +1,13 @@
-import type { ErrorResponse } from "@/shared/types";
 import { Hono } from "hono";
+import { serveStatic } from "hono/bun";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
-import { lucia } from "./lucia";
+import type { ErrorResponse } from "../shared/types";
 import type { Context } from "./context";
+import { lucia } from "./lucia";
 import { authRouter } from "./routes/auth";
-import { postRouter } from "./routes/posts";
 import { commentsRouter } from "./routes/comments";
+import { postRouter } from "./routes/posts";
 
 const app = new Hono<Context>();
 
@@ -36,9 +37,20 @@ app.use("*", cors(), async (c, next) => {
 
 const routes = app
 	.basePath("/api")
+	.get("/health", (c) => c.json({ status: "ok" }))
 	.route("/auth", authRouter)
 	.route("/posts", postRouter)
 	.route("/comments", commentsRouter);
+
+// Unknown API paths get a JSON 404 instead of falling through to the SPA.
+app.all("/api/*", (c) =>
+	c.json<ErrorResponse>({ success: false, error: "Not Found" }, 404),
+);
+
+// Production: serve the built frontend (frontend/dist) from the same origin,
+// with index.html as the fallback for client-side routes.
+app.get("*", serveStatic({ root: "./frontend/dist" }));
+app.get("*", serveStatic({ path: "./frontend/dist/index.html" }));
 
 app.onError((err, c) => {
 	if (err instanceof HTTPException) {

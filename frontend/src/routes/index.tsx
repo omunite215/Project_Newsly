@@ -42,8 +42,8 @@ const postsInfiniteQueryOptions = ({
 			}),
 		initialPageParam: 1,
 		staleTime: Number.POSITIVE_INFINITY,
-		getNextPageParam: (lastPage, allPages, lastPageParam) => {
-			if (lastPage <= lastPageParam) {
+		getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+			if (lastPage.pagination.totalPages <= lastPageParam) {
 				return undefined;
 			}
 			return lastPageParam + 1;

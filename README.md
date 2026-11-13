@@ -5,6 +5,8 @@
 
 A Hackernews clone made using Google's Material UI Design System, built with Hono and React.
 
+**Live demo:** _add your Render URL here_ (free tier: the first request after ~15 idle minutes takes about a minute to wake up)
+
 What's new:
 - Used latest features of modern React 19.
 - Used latest backend framework Hono.
@@ -14,8 +16,33 @@ What's new:
 - Support Light, Dark and System Themes with switching animations.
 - Responsive across all devices.
 - Authentication with modern Lucia auth.
-- Used Docker for PostgeSQL setup. File provided in the repo itself.
+- Used Docker for PostgreSQL setup. File provided in the repo itself.
 - TypeScript to ensure type safety.
+
+## 🚀 Run locally
+
+Requires [Bun](https://bun.sh) and Docker.
+
+```bash
+bun install && (cd frontend && bun install)
+cp .env.example .env          # DATABASE_URL for the compose database
+docker compose up -d db       # Postgres on localhost:5432
+bun run db:migrate            # create tables
+bun run dev                   # API on http://localhost:3000
+cd frontend && bun run dev    # app on http://localhost:3001 (proxies /api)
+```
+
+Useful scripts: `bun run typecheck`, `bun run format:check`, `bun run db:generate` (after editing `server/db/schemas`).
+
+## ☁️ Deploy for free (Render + Neon)
+
+In production one Bun process serves both the API (`/api/*`) and the built React app, so auth cookies stay same-origin.
+
+1. **Database: [Neon](https://neon.com) free plan.** Create a project in an **AWS** region. Neon doesn't pause or delete free projects for inactivity; the compute just sleeps after 5 idle minutes and wakes on the next query. Copy the **direct** (not pooled) connection string.
+2. **App: [Render](https://render.com) free web service.** New → Blueprint → pick this repo. Render reads `render.yaml`, builds the `Dockerfile`, and asks for `DATABASE_URL`: paste the Neon string.
+3. Done. Migrations run automatically on every start (`server/migrate.ts`), and Render health-checks `/api/health`.
+
+Don't use Render's own free Postgres: it expires 30 days after creation.
 
 ## :star: Give A Star
 
