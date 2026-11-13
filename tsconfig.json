@@ -27,8 +27,9 @@
 
 		// Default Settings
 		"paths": {
-			"@/shared/*": ["./shared/*"],
-			"@/*": ["./server/*"]
+			"@/shared/*": ["./shared/*"]
 		}
-	}
+	},
+	// The frontend has its own tsconfig (frontend/tsconfig.json)
+	"include": ["server", "shared", "drizzle.config.ts"]
 }

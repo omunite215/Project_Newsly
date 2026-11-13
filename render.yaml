@@ -1,0 +1,12 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# Free web service running the Dockerfile. The database lives on Neon
+# (Render's free Postgres expires after 30 days, Neon's free tier does not).
+services:
+  - type: web
+    name: newsly
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false # paste your Neon connection string in the Render dashboard

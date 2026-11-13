@@ -46,9 +46,11 @@ export type Comment = {
 };
 
 export type PaginatedResponse<T> = {
+	success: true;
+	message: string;
+	data: T;
 	pagination: {
 		page: number;
 		totalPages: number;
 	};
-	data: T;
-} & Omit<SuccessResponse, "data">;
+};

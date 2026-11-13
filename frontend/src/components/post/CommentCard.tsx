@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
 	Box,
 	Typography,
@@ -41,20 +41,26 @@ export function CommentCard({
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const { data: user } = useQuery(userQueryOptions());
+	// The post page preloads the first replies of top-level comments only.
+	// Deeper comments that have replies fetch their first page on mount.
+	const preloadedReplies =
+		comment.childComments ?? (comment.commentCount === 0 ? [] : undefined);
 	const {
 		data: comments,
+		isLoading: isLoadingReplies,
 		hasNextPage,
 		fetchNextPage,
 		isFetchingNextPage,
-	} = useSuspenseInfiniteQuery({
+	} = useInfiniteQuery({
 		...nestedCommentsQueryOptions(comment.id),
-		initialData: {
+		staleTime: Number.POSITIVE_INFINITY,
+		initialData: preloadedReplies && {
 			pageParams: [1],
 			pages: [
 				{
-					success: true,
+					success: true as const,
 					message: "Pre-loaded",
-					data: comment.childComments ?? [],
+					data: preloadedReplies,
 					pagination: {
 						page: 1,
 						totalPages: Math.ceil(comment.commentCount / 2),
@@ -175,7 +181,16 @@ export function CommentCard({
 			</Box>
 			{!isCollapsed && (
 				<Box>
-					{comments.pages.map((page) =>
+					{isLoadingReplies && (
+						<Typography
+							variant="caption"
+							color="text.secondary"
+							sx={{ display: "block", ml: isMobile ? 2 : 4, py: 1 }}
+						>
+							Loading replies...
+						</Typography>
+					)}
+					{comments?.pages.map((page) =>
 						page.data.map((child, idx) => (
 							<CommentCard
 								key={child.id}

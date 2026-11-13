@@ -83,7 +83,7 @@ function Submit() {
 				return;
 			}
 
-			const res = await postSubmit(value.title, value.content, value.url);
+			const res = await postSubmit(value.title, value.url, value.content);
 
 			if (res.success) {
 				await queryClient.invalidateQueries({ queryKey: ["posts"] });

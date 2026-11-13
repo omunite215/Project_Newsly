@@ -1,25 +1,25 @@
-import { db } from "@/adapter";
-import type { Context } from "@/context";
-import { commentsTable } from "@/db/schemas/comments";
-import { postsTable } from "@/db/schemas/posts";
-import { commentUpvotesTable } from "@/db/schemas/upvotes";
-import { getISOFormatDateQuery } from "@/lib/utils";
-import { loggedIn } from "@/middleware/loggedIn";
+import { zValidator } from "@hono/zod-validator";
+import { and, asc, countDistinct, desc, eq, sql } from "drizzle-orm";
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import type { User } from "lucia";
 import {
 	checkIdSchema,
 	createCommentSchema,
 	paginationSchema,
-} from "@/shared/schemas";
+} from "../../shared/schemas";
 import type {
 	Comment,
 	PaginatedResponse,
 	SuccessResponse,
-} from "@/shared/types";
-import { zValidator } from "@hono/zod-validator";
-import { and, asc, countDistinct, desc, eq, isNull, sql } from "drizzle-orm";
-import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
-import type { User } from "lucia";
+} from "../../shared/types";
+import { db } from "../adapter";
+import type { Context } from "../context";
+import { commentsTable } from "../db/schemas/comments";
+import { postsTable } from "../db/schemas/posts";
+import { commentUpvotesTable } from "../db/schemas/upvotes";
+import { getISOFormatDateQuery } from "../lib/utils";
+import { loggedIn } from "../middleware/loggedIn";
 
 export const commentsRouter = new Hono<Context>()
 	.post(
@@ -32,7 +32,7 @@ export const commentsRouter = new Hono<Context>()
 			const { content } = c.req.valid("form");
 			const user = c.get("user") as User;
 			const [comment] = await db.transaction(async (tx) => {
-				const [parentComment] = await db
+				const [parentComment] = await tx
 					.select({
 						id: commentsTable.id,
 						postId: commentsTable.postId,
@@ -110,7 +110,7 @@ export const commentsRouter = new Hono<Context>()
 			let pointsChange: -1 | 1 = 1;
 			const points = await db.transaction(async (tx) => {
 				//EP
-				const [existingUpvote] = await db
+				const [existingUpvote] = await tx
 					.select()
 					.from(commentUpvotesTable)
 					.where(
@@ -176,11 +176,9 @@ export const commentsRouter = new Hono<Context>()
 				.where(eq(commentsTable.parentCommentId, id));
 
 			const comments = await db.query.comments.findMany({
-				where: and(
-					eq(commentsTable.postId, id),
-					isNull(commentsTable.parentCommentId),
-				),
-				orderBy: sortOrder,
+				where: eq(commentsTable.parentCommentId, id),
+				// id tiebreaker keeps pagination stable when points/dates are equal
+				orderBy: [sortOrder, desc(commentsTable.id)],
 				limit: limit,
 				offset: offset,
 				with: {

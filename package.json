@@ -2,6 +2,11 @@
 	"name": "newsly",
 	"scripts": {
 		"dev": "bun run --hot server/index.ts",
+		"build": "cd frontend && bun install --frozen-lockfile && bun run build",
+		"start": "bun run server/migrate.ts && bun run server/index.ts",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "bun run server/migrate.ts",
+		"typecheck": "tsc --noEmit && cd frontend && tsc --noEmit",
 		"format:write": "bunx biome format --write",
 		"format:check": "bunx biome check",
 		"format:lint": "bunx biome lint"

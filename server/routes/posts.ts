@@ -1,29 +1,29 @@
-import { db } from "@/adapter";
-import type { Context } from "@/context";
-import { userTable } from "@/db/schemas/auth";
-import { commentsTable } from "@/db/schemas/comments";
-import { postsTable } from "@/db/schemas/posts";
-import { commentUpvotesTable, postUpvotesTable } from "@/db/schemas/upvotes";
-import { getISOFormatDateQuery } from "@/lib/utils";
-import { loggedIn } from "@/middleware/loggedIn";
-import {
-	createPostSchema,
-	paginationSchema,
-	checkIdSchema,
-	createCommentSchema,
-} from "@/shared/schemas";
-import type {
-	Comment,
-	PaginatedResponse,
-	Post,
-	SuccessResponse,
-} from "@/shared/types";
 import { zValidator } from "@hono/zod-validator";
 import { and, asc, countDistinct, desc, eq, isNull, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { User } from "lucia";
 import z from "zod";
+import {
+	checkIdSchema,
+	createCommentSchema,
+	createPostSchema,
+	paginationSchema,
+} from "../../shared/schemas";
+import type {
+	Comment,
+	PaginatedResponse,
+	Post,
+	SuccessResponse,
+} from "../../shared/types";
+import { db } from "../adapter";
+import type { Context } from "../context";
+import { userTable } from "../db/schemas/auth";
+import { commentsTable } from "../db/schemas/comments";
+import { postsTable } from "../db/schemas/posts";
+import { commentUpvotesTable, postUpvotesTable } from "../db/schemas/upvotes";
+import { getISOFormatDateQuery } from "../lib/utils";
+import { loggedIn } from "../middleware/loggedIn";
 
 export const postRouter = new Hono<Context>()
 	.post("/", loggedIn, zValidator("form", createPostSchema), async (c) => {
@@ -86,7 +86,7 @@ export const postRouter = new Hono<Context>()
 			})
 			.from(postsTable)
 			.leftJoin(userTable, eq(postsTable.userId, userTable.id))
-			.orderBy(sortOrder)
+			.orderBy(sortOrder, desc(postsTable.id))
 			.limit(limit)
 			.offset(offset)
 			.where(
@@ -130,7 +130,7 @@ export const postRouter = new Hono<Context>()
 			let pointsChange: -1 | 1 = 1;
 			const points = await db.transaction(async (tx) => {
 				//EP
-				const [existingUpvote] = await db
+				const [existingUpvote] = await tx
 					.select()
 					.from(postUpvotesTable)
 					.where(
@@ -264,7 +264,7 @@ export const postRouter = new Hono<Context>()
 					eq(commentsTable.postId, id),
 					isNull(commentsTable.parentCommentId),
 				),
-				orderBy: sortOrder,
+				orderBy: [sortOrder, desc(commentsTable.id)],
 				limit: limit,
 				offset: offset,
 				with: {
@@ -296,7 +296,9 @@ export const postRouter = new Hono<Context>()
 								where: eq(commentUpvotesTable.userId, user?.id ?? ""),
 							},
 						},
-						orderBy: sortOrder,
+						// Must match the default order of GET /comments/:id/comments,
+						// which the client uses to load the remaining replies.
+						orderBy: [desc(commentsTable.points), desc(commentsTable.id)],
 						extras: {
 							createdAt: getISOFormatDateQuery(commentsTable.createdAt).as(
 								"created_at",
